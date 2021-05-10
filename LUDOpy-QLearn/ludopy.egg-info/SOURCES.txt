@@ -1,0 +1,14 @@
+MANIFEST.in
+README.md
+setup.py
+ludopy/__init__.py
+ludopy/game.py
+ludopy/glob.png
+ludopy/player.py
+ludopy/star.png
+ludopy/visualizer.py
+ludopy.egg-info/PKG-INFO
+ludopy.egg-info/SOURCES.txt
+ludopy.egg-info/dependency_links.txt
+ludopy.egg-info/requires.txt
+ludopy.egg-info/top_level.txt
