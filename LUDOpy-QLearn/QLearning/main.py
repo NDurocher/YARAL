@@ -1,15 +1,10 @@
-import unittest
 import sys
-from PIL import Image
-import progressbar
-from joblib import Parallel, delayed
-import time
+
 sys.path.insert(0,"../")
 import matplotlib.pyplot as plt
-import numpy as np
 
-        
-    # return playerIsAWinner
+
+# return playerIsAWinner
     # if(i>0):
     #     player1WinningAvg.append((player1Won/i)*100)
     #     if(playerIsAWinner and player_i == 0):
@@ -33,12 +28,10 @@ import numpy as np
 def randwalk():
     import ludopy
     from PIL import Image as pilImg
-    from QLearning.stateSpace import StateSpace
     from QLearning.QTable import Rewards
     from QLearning.stateSpace import Action
-    from QLearning.stateSpace import State
     from QLearning.stateSpacePlayer import StateSpacePlayer
-    from Qlearn import Qplayer, plottesting
+    from test.Qlearn import Qplayer, plottesting
     import numpy as np
 
 
@@ -48,12 +41,12 @@ def randwalk():
     ghosts = [1, 3]
     num_of_opp = 3-len(ghosts)
     g = ludopy.Game(ghost_players=ghosts)
-    qLearning = Rewards(4,10)
+    qLearning = Rewards(4, 10)
     player1Won=0
     player2Won=0
     player1WinningAvg = []
     player2WinningAvg = []
-    trainingGames = 200
+    trainingGames = 1
     plt.axis([0, trainingGames, 0, 100])
     for i in range(trainingGames):
         there_is_a_winner = False

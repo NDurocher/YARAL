@@ -1,14 +1,12 @@
 import copy
 import sys
-from copy import deepcopy
+import time
+
+import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
 
 import ludopy
-import numpy as np
-import time
-import pandas as pd
-import matplotlib.pyplot as plt
-
-from matplotlib import pyplot as plt
 
 sys.path.append("../")
 
@@ -408,7 +406,7 @@ def main():
 def test():
     wins = np.zeros([4], dtype=int)
     player0 = Qplayer()
-    ghosts = [2,3]
+    ghosts = [1]
     num_of_opp = 3-len(ghosts)
     games = 100
     start_time = time.time()
