@@ -46,7 +46,7 @@ def randwalk():
     player2Won=0
     player1WinningAvg = []
     player2WinningAvg = []
-    trainingGames = 1
+    trainingGames = 200
     plt.axis([0, trainingGames, 0, 100])
     for i in range(trainingGames):
         there_is_a_winner = False
@@ -124,8 +124,9 @@ def randwalk():
         # print("Success... Saving history to numpy file")
         # g.save_hist("game_history.npy")
         # print("Saving game video")
-        # g.save_hist_video("game_video.mp4")
+
     # plt.savefig("SuccessRate.png")
+    # g.save_hist_video("game_video.mp4")
     df = plottesting(np.arange(i), player2WinningAvg, num_of_opp)
     print("Success Jan: {0}%".format((player1Won/trainingGames)*100))
     print("Success Nathan: {0}%".format((player2Won/trainingGames)*100))

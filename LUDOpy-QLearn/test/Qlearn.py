@@ -47,7 +47,7 @@ class Qplayer:
         self.prev_state = np.zeros([4], dtype=int)
         self.prev_action = 9*np.ones([4], dtype=int)
         # tiles is the type of square, list goes [globe, star, goalzone, goal]
-        self.tiles = [[1, 9, 14, 22, 27, 35, 40, 48, 53], [5, 12, 18, 25, 31, 38, 44, 51], [53, 54, 55, 56, 57, 58], [59]]
+        self.tiles = [[1, 9, 22, 35, 48, 53], [5, 12, 18, 25, 31, 38, 44, 51], [53, 54, 55, 56, 57, 58], [59]]
         self.istrain = isTrain
 
         # discount
@@ -166,7 +166,7 @@ class Qplayer:
     def possiblemoves(self, current_piece, player_pieces, enemy, dice):
         vecPossibleMoves = np.zeros([10, 10])
         # tiles is the type of square, list goes [globe, star, goalzone, goal]
-        tiles = [[1, 9, 14, 22, 27, 35, 40, 48, 53], [5, 12, 18, 25, 31, 38, 44, 51], [53, 54, 55, 56, 57, 58],
+        tiles = [[1, 9, 22, 35, 48, 53], [5, 12, 18, 25, 31, 38, 44, 51], [53, 54, 55, 56, 57, 58],
                  [59]]
 
         adj_enemy = self.adjustenemy(enemy)
@@ -368,7 +368,7 @@ def plottesting(num_games, deltavalues, num_of_opp):
     # naming the y axis
     plt.ylabel('Win Rate %')
     # giving a title to my graph
-    plt.title('Win Rate Against '+str(num_of_opp)+' Smart Opponents')
+    plt.title('Win Rate Against '+str(num_of_opp)+' Opponent')
 
     plt.legend(['5 Game Average Win Rate'], loc='upper right')
     # function to show the plot
@@ -406,7 +406,7 @@ def main():
 def test():
     wins = np.zeros([4], dtype=int)
     player0 = Qplayer()
-    ghosts = [1]
+    ghosts = []
     num_of_opp = 3-len(ghosts)
     games = 100
     start_time = time.time()
@@ -420,10 +420,11 @@ def test():
                 print(i)
     end_time = time.time()
     df = plottesting(np.arange(i+1), winrate, num_of_opp)
+    df.to_csv('TestingData.csv')
     print("\n", int(end_time - start_time), "Seconds")
     print("Win percentage: ", int(wins[0] / games * 100), "%")
     print(wins)
-    df.to_csv('TestingData.csv')
+
 
 if __name__ == '__main__':
     # main()
