@@ -53,6 +53,7 @@ class Qplayer:
         # discount
         self.delta = 0.6
 
+
     def nextmove(self, player_i, player_pieces, enemy_pieces, dice, move_pieces):
         self.piece, self.action, self.state = self.map2gamespace(player_i, player_pieces,
                                                                  enemy_pieces, dice, move_pieces)
@@ -289,6 +290,8 @@ class Qplayer:
         LR = 0.4  # learning rate
         func = switcher.get(self.action, lambda: "Invalid Action")
         r = func(self, piece)
+        if (self.state % 3) == 0:
+            r += 0.1
         delta_LUT = LR * (r + self.delta * max_Q_new - self.LUT[self.state, self.action])
         self.LUT[self.state, self.action] += delta_LUT
         # self.delta = self.delta*self.delta
@@ -368,7 +371,7 @@ def plottesting(num_games, deltavalues, num_of_opp):
     # naming the y axis
     plt.ylabel('Win Rate %')
     # giving a title to my graph
-    plt.title('Win Rate Against '+str(num_of_opp)+' Opponent')
+    plt.title('Win Rate Against '+str(num_of_opp)+' Smart Opponent')
 
     plt.legend(['5 Game Average Win Rate'], loc='upper right')
     # function to show the plot
@@ -397,18 +400,18 @@ def main():
         dLUT_arr.append((player0.LUT.sum()-Before)/entries)
     end_time = time.time()
     print("\n", int(end_time - start_time), "Seconds")
-    df = plotLearning(np.arange(i + 1), dLUT_arr)
+    # df = plotLearning(np.arange(i + 1), dLUT_arr)
     player0.write2text()
     print("Training Complete!")
-    df.to_csv('TrainingData.csv')
+    # df.to_csv('TrainingData.csv')
 
 
 def test():
     wins = np.zeros([4], dtype=int)
     player0 = Qplayer()
-    ghosts = []
+    ghosts = [3]
     num_of_opp = 3-len(ghosts)
-    games = 100
+    games = 1000
     start_time = time.time()
     winrate = []
     for i in range(0, games):

@@ -46,7 +46,7 @@ def randwalk():
     player2Won=0
     player1WinningAvg = []
     player2WinningAvg = []
-    trainingGames = 200
+    trainingGames = 1000
     plt.axis([0, trainingGames, 0, 100])
     for i in range(trainingGames):
         there_is_a_winner = False
