@@ -14,6 +14,8 @@ sys.path.append("../")
 def Qlearn(player0, ghosts):
     g = ludopy.Game(ghost_players=ghosts)
     there_is_a_winner = False
+    actions = 0
+    overshoots = 0
 
     while not there_is_a_winner:
         (dice, move_pieces, player_pieces, enemy_pieces, player_is_a_winner,
@@ -22,6 +24,8 @@ def Qlearn(player0, ghosts):
         if (player_i > 0):
             if len(move_pieces):
                 piece_to_move = move_pieces[np.random.randint(0, len(move_pieces))]
+                if player_pieces[piece_to_move]+ dice > 59:
+                    overshoots += 1
             else:
                 piece_to_move = -1
             _, _, _, _, _, there_is_a_winner = g.answer_observation(piece_to_move)
@@ -30,6 +34,8 @@ def Qlearn(player0, ghosts):
             piece_to_move = player0.piece
             _, _, new_P0, new_enemy, _, there_is_a_winner = g.answer_observation(piece_to_move)
             player0.train(new_P0, new_enemy)
+            if player0.action == 7:
+                actions += 1
 
     # print(player_pieces, player_i, enemy_pieces)
     # print("Saving history to numpy file")
@@ -338,31 +344,40 @@ class Qplayer:
                 self.LUT[jj + 12, ii] = temp
 
 
-def plotLearning(num_games, deltavalues):
+def plotLearning(num_games, deltavalues, aivalues):
     df = pd.DataFrame(data=deltavalues, index=num_games, columns=["column1"])
-    df['5 Game Average'] = df.column1.rolling(window=5).mean()
+    df['aivalues'] = aivalues
+    df['5 Game Average Player'] = df.column1.rolling(window=5).mean()
+    df['5 Game Average Random'] = df.aivalues.rolling(window=5).mean()
 
-    plt.plot(df.index, df['5 Game Average'], label=r'ΔQ 5 Game Average')
-    # plt.plot(num_games, deltavalues)
-
+    fig = plt.figure(figsize=(6.4, 4.8))
+    ax = fig.add_subplot(111)
+    ax.set_ylim([0, 10])
+    plt.plot(df.index, df['5 Game Average Player'])
+    plt.plot(df.index, df['5 Game Average Random'])
     # naming the x axis
     plt.xlabel('Number of Games')
     # naming the y axis
-    plt.ylabel('Average Change in Q value per Game')
+    plt.ylabel('Actions Per Game')
     # giving a title to my graph
-    plt.title('Diminishing Return for Updating Q-Table')
+    plt.title('Number of Overshoot Actions Per Game')
 
-    plt.legend([r'$\Delta$Q 5 Game Average'], loc='upper right')
+    plt.legend([r'5 Game Average Player', '5 Game Average Random'], loc='upper right')
     # function to show the plot
     plt.show()
 
     return df
 
+
 def plottesting(num_games, deltavalues, num_of_opp):
     df = pd.DataFrame(data=deltavalues, index=num_games, columns=["column1"])
-    df['5 Game Average'] = df.column1.rolling(window=5).mean()
+    df['5-GM Avg'] = df.column1.rolling(window=5).mean()
 
-    plt.plot(df.index, df['5 Game Average'])
+    fig = plt.figure(figsize=(9.6, 7.2))
+    ax = fig.add_subplot(111)
+    ax.set_ylim([20, 100])
+
+    plt.plot(df.index, df['5-GM Avg'])
     # plt.plot(df.index, df["column1"])
     # plt.plot(num_games, deltavalues)
 
@@ -371,9 +386,40 @@ def plottesting(num_games, deltavalues, num_of_opp):
     # naming the y axis
     plt.ylabel('Win Rate %')
     # giving a title to my graph
-    plt.title('Win Rate Against '+str(num_of_opp)+' Smart Opponent')
+    plt.title('Win Rate Against '+str(num_of_opp)+' Opponents')
 
-    plt.legend(['5 Game Average Win Rate'], loc='upper right')
+    plt.legend(['5-GM Avg'], loc='upper right')
+    # function to show the plot
+    plt.show()
+
+    return df
+
+def plottestcomb(num_games, op1, op2, op3):
+
+    df = pd.DataFrame(data=op1, index=num_games, columns=["op1"])
+    df['op2'] = op2
+    df['op3'] = op3
+
+    df['5-GM Avg Op1'] = df.op1.rolling(window=5).mean()
+    df['5-GM Avg Op2'] = df.op2.rolling(window=5).mean()
+    df['5-GM Avg Op3'] = df.op3.rolling(window=5).mean()
+
+    fig = plt.figure(figsize=(9.6, 7.2))
+    ax = fig.add_subplot(111)
+    ax.set_ylim([20, 90])
+
+    plt.plot(df.index, df['5-GM Avg Op1'])
+    plt.plot(df.index, df['5-GM Avg Op2'])
+    plt.plot(df.index, df['5-GM Avg Op3'])
+
+    # naming the x axis
+    plt.xlabel('Number of Games')
+    # naming the y axis
+    plt.ylabel('Win Rate %')
+    # giving a title to my graph
+    plt.title('Win Rate Against Various Opponents')
+
+    plt.legend(['5-GM Avg 1 Opponent', '5-GM Avg 2 Opponents', '5-GM Avg 3 Opponents'], loc='upper right')
     # function to show the plot
     plt.show()
 
@@ -381,52 +427,60 @@ def plottesting(num_games, deltavalues, num_of_opp):
 
 
 def main():
-    player0 = Qplayer(newtbl=True, isTrain=True)
-    # player0 = Qplayer(isTrain=True)
+    # player0 = Qplayer(newtbl=True, isTrain=True)
+    player0 = Qplayer()
     ghosts = []
-    games = 60
+    games = 100
     start_time = time.time()
-    dLUT_arr = []
+    # dLUT_arr = []
+    nummoves = []
+    aiovers = []
     for i in range(0, games):
         Before = player0.LUT.sum()
-        # hold = deepcopy(player0.LUT)
-        winner, rounds = Qlearn(player0, ghosts)
+        winner, usefulmoves, overs = Qlearn(player0, ghosts)
         player0.averageqs()
         if (i % int(games / 10)) == 0:
             print(i)
-        # if winner == 0:
-        #     player0.LUT = hold
-        entries = np.count_nonzero(player0.LUT)
-        dLUT_arr.append((player0.LUT.sum()-Before)/entries)
+        # entries = np.count_nonzero(player0.LUT)
+        # dLUT_arr.append((player0.LUT.sum()-Before)/entries)
+        nummoves.append(usefulmoves)
+        aiovers.append((overs/3))
     end_time = time.time()
     print("\n", int(end_time - start_time), "Seconds")
-    # df = plotLearning(np.arange(i + 1), dLUT_arr)
+    df = plotLearning(np.arange(i + 1), nummoves, aiovers)
     player0.write2text()
     print("Training Complete!")
     # df.to_csv('TrainingData.csv')
 
 
 def test():
-    wins = np.zeros([4], dtype=int)
     player0 = Qplayer()
-    ghosts = [3]
-    num_of_opp = 3-len(ghosts)
+    ghosts = [[1, 3], [2], []]
     games = 1000
     start_time = time.time()
-    winrate = []
-    for i in range(0, games):
-        winner, rounds = Qlearn(player0, ghosts)
-        wins[winner] += 1
-        winrate.append(wins[0]/(i+1)*100)
-        if i != 0:
-            if (i % int(games / 10)) == 0:
-                print(i)
+    for ghost in ghosts:
+        wins = np.zeros([4], dtype=int)
+        num_of_opp = 3-len(ghost)
+        winrate = []
+        for i in range(0, games):
+            winner, rounds = Qlearn(player0, ghost)
+            wins[winner] += 1
+            winrate.append(wins[0]/(i+1)*100)
+            if i != 0:
+                if (i % int(games / 10)) == 0:
+                    print(i)
+        print("Win percentage: ", int(wins[0] / games * 100), "%")
+        print(wins)
+        if num_of_opp == 1:
+            op1 = winrate
+        elif num_of_opp == 2:
+            op2 = winrate
+        else:
+            op3 = winrate
     end_time = time.time()
-    df = plottesting(np.arange(i+1), winrate, num_of_opp)
-    df.to_csv('TestingData.csv')
     print("\n", int(end_time - start_time), "Seconds")
-    print("Win percentage: ", int(wins[0] / games * 100), "%")
-    print(wins)
+    df = plottestcomb(np.arange(i + 1), op1, op2, op3)
+    df.to_csv('TestingData.csv')
 
 
 if __name__ == '__main__':
