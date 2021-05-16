@@ -43,7 +43,7 @@ def Qlearn(player0, ghosts):
     # print("Saving game video")
     # g.save_hist_video("game_video.mp4")
 
-    return g.get_winner_of_game(), g.round
+    return g.get_winner_of_game(), actions, overshoots
 
 
 class Qplayer:
@@ -394,6 +394,7 @@ def plottesting(num_games, deltavalues, num_of_opp):
 
     return df
 
+
 def plottestcomb(num_games, op1, op2, op3):
 
     df = pd.DataFrame(data=op1, index=num_games, columns=["op1"])
@@ -427,43 +428,46 @@ def plottestcomb(num_games, op1, op2, op3):
 
 
 def main():
-    # player0 = Qplayer(newtbl=True, isTrain=True)
-    player0 = Qplayer()
+    player0 = Qplayer(newtbl=True, isTrain=True)
+    # player0 = Qplayer()
     ghosts = []
-    games = 100
+    games = 60
     start_time = time.time()
     # dLUT_arr = []
-    nummoves = []
-    aiovers = []
+    # nummoves = []
+    # aiovers = []
     for i in range(0, games):
-        Before = player0.LUT.sum()
+        # Before = player0.LUT.sum()
         winner, usefulmoves, overs = Qlearn(player0, ghosts)
         player0.averageqs()
         if (i % int(games / 10)) == 0:
             print(i)
         # entries = np.count_nonzero(player0.LUT)
         # dLUT_arr.append((player0.LUT.sum()-Before)/entries)
-        nummoves.append(usefulmoves)
-        aiovers.append((overs/3))
+        # nummoves.append(usefulmoves)
+        # aiovers.append((overs/3))
     end_time = time.time()
     print("\n", int(end_time - start_time), "Seconds")
-    df = plotLearning(np.arange(i + 1), nummoves, aiovers)
+    # df = plotLearning(np.arange(i + 1), nummoves, aiovers)
     player0.write2text()
+    # print("Average overshoot by Random: " + str(np.mean(aiovers)))
+    # print("Average overshoot by Qplayer: " + str(np.mean(nummoves)))
     print("Training Complete!")
     # df.to_csv('TrainingData.csv')
 
 
 def test():
     player0 = Qplayer()
-    ghosts = [[1, 3], [2], []]
-    games = 1000
+    # ghosts = [[1, 3], [2], []]
+    ghosts = [[1,3]]
+    games = 100
     start_time = time.time()
     for ghost in ghosts:
         wins = np.zeros([4], dtype=int)
         num_of_opp = 3-len(ghost)
         winrate = []
         for i in range(0, games):
-            winner, rounds = Qlearn(player0, ghost)
+            winner, myovershoot, aiovershoot = Qlearn(player0, ghost)
             wins[winner] += 1
             winrate.append(wins[0]/(i+1)*100)
             if i != 0:
@@ -479,10 +483,10 @@ def test():
             op3 = winrate
     end_time = time.time()
     print("\n", int(end_time - start_time), "Seconds")
-    df = plottestcomb(np.arange(i + 1), op1, op2, op3)
-    df.to_csv('TestingData.csv')
+    # df = plottestcomb(np.arange(i + 1), op1, op2, op3)
+    # df.to_csv('TestingData.csv')
 
 
 if __name__ == '__main__':
-    # main()
+    main()
     test()
