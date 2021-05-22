@@ -2,6 +2,7 @@
 A Q learning AI player for the LUDO board game
 
 To use my player import Qlearn.py and Qs.txt from the LUDOpy-QLearn/test
+You may need to edit the path in self.tablename on line 51
 
 Define player:
   player0 = Qplayer()
