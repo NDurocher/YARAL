@@ -63,4 +63,5 @@ Make move:
 
 ## Credits
 LUDOpy developed by https://github.com/SimonLBSoerensen/LUDOpy.
+
 Classmate player policy created by Jan Ruben Schmid. LudoPy. https://github.com/janschmid/LudoPy.
