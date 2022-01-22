@@ -47,8 +47,8 @@ def Qlearn(player0, ghosts):
 
 
 class Qplayer:
-    def __init__(self, newtbl=False, isTrain=False):
-        self.tableName = "Qs.txt"
+    def __init__(self, tableName="Qs.txt", newtbl=False, isTrain=False):
+        self.tableName = tableName
         self.LUT = self.Qinit(newtbl)
         self.prev_state = np.zeros([4], dtype=int)
         self.prev_action = 9*np.ones([4], dtype=int)
