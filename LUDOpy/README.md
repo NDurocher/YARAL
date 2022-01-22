@@ -1,5 +1,4 @@
 # LUDOpy
-## Taken from https://github.com/SimonLBSoerensen/LUDOpy for use in SDU AI2 course in spring 2021
 
 This is a implementation of the LUDO game in python for use in AI or whatever you want.  
  
