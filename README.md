@@ -1,4 +1,4 @@
-# YARAL: Yet Another Reinforcement learning  Approach to Ludo
+# YARAL: Yet Another Reinforcement Learning Approach to Ludo
 A Q learning AI player for the LUDO board game.
 
 ## Motivation
