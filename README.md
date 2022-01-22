@@ -54,12 +54,15 @@ The player policy was also able to win a significant amount of games against a c
 To use my player import Qlearn.py and Qs.txt from /src and ludopy from /LUDOpy/
 
 Define player:
-  player0 = Qplayer(tableName="/PATH/to/Qs.txt")
-
+```
+player0 = Qplayer(tableName="/PATH/to/Qs.txt")
+```
 Make move:
+```
   player0.nextmove(player_i, player_pieces, enemy_pieces, dice, move_pieces)
             piece_to_move = player0.piece
             _, _, new_P0, new_enemy, _, there_is_a_winner = g.answer_observation(piece_to_move)
+```
 
 ## Credits
 LUDOpy developed by https://github.com/SimonLBSoerensen/LUDOpy.
